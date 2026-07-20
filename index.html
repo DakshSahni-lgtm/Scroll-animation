@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Scroll Animation</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #ffffff;
+            /* This makes the page tall enough to scroll through all frames */
+            height: 400vh; 
+        }
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sticky-container">
+        <canvas id="scrollCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('scrollCanvas');
+        const context = canvas.getContext('2d');
+        
+        // Match this to your exact number of images
+        const frameCount = 65; 
+        
+        // This looks for 0001.jpg, 0002.jpg, etc., inside the 'frames' folder
+        const currentFrame = index => `./frames/${(index + 1).toString().padStart(4, '0')}.jpg`;
+
+        const images = [];
+        
+        // Preload all 65 images so scrolling is smooth
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            images.push(img);
+        }
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Draw the very first image as soon as the page loads
+        images[0].onload = () => {
+            context.drawImage(images[0], 0, 0, canvas.width, canvas.height);
+        }
+
+        // Listen for the user scrolling
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollTop / maxScrollTop;
+            
+            // Calculate which frame to show based on scroll depth
+            const frameIndex = Math.min(
+                frameCount - 1,
+                Math.floor(scrollFraction * frameCount)
+            );
+
+            // Draw the correct frame to the canvas
+            requestAnimationFrame(() => {
+                if (images[frameIndex].complete) {
+                    context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+                }
+            });
+        });
+
+        // Adjust if the user resizes their browser window
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
