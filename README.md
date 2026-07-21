@@ -12,7 +12,12 @@ As the user scrolls down the page, JavaScript swaps canvas frames in sync with t
 
 ## Quick Start
 
-### 1. Prepare Your Frames
+### 1. Collect Frames From Your Video
+
+Use any frame extractor tool.
+> BONUS: You can use my frame extractor tool for generating upto 60 frames per second without any quality loss: [video-frames-extractor](https://dakshsahni-lgtm.github.io/video-frames-extractor/) .
+
+### 2. Prepare Your Frames
 
 Create a folder named `frames` in the same directory as `index.html`:
 
@@ -33,7 +38,7 @@ Frames must be named sequentially: `0001.jpg`, `0002.jpg`, … up to your last f
 
 ---
 
-### 2. Update the Frame Count
+### 3. Update the Frame Count
 
 Open `index.html` and find this line near the top of the `<script>`:
 
@@ -49,7 +54,7 @@ const frameCount = 87;
 
 ---
 
-### 3. Open in a Browser
+### 4. Open in a Browser
 
 Open `index.html` in your browser and scroll — you should see your animation play.
 
