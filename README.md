@@ -88,6 +88,89 @@ Run it from your project's root directory (where `index.html` lives). It will so
 
 ---
 
+## Does Frame Count Affect Page Height?
+ 
+**No.** You do not need to change `height: 400vh`, the canvas size, or anything else when you change the number of frames.
+ 
+The animation always plays across the full scroll range, regardless of how many frames there are. The math is proportional:
+ 
+```
+scroll 0% → frame 1
+scroll 50% → middle frame
+scroll 100% → last frame
+```
+ 
+More frames just means a smoother animation — each frame gets a smaller slice of the same scroll distance. The only reason to increase `400vh` is if you want the user to scroll *longer* before the animation finishes. That's a creative choice, not a technical one.
+ 
+---
+ 
+## My Frames Are a Different Aspect Ratio
+ 
+By default, the canvas stretches each frame to fill the entire screen. If your frames are 16:9 but the viewer's screen is portrait (like a phone), the image will look squashed — and vice versa.
+ 
+The fix is to replace the two `context.drawImage(...)` lines in `index.html` with a smarter version that scales the frame to fill the screen without distorting it (cropping the edges slightly instead, just like a full-screen photo wallpaper).
+ 
+**Step 1** — Find this block near the bottom of `index.html` and delete it:
+ 
+```js
+images[0].onload = () => {
+    context.drawImage(images[0], 0, 0, canvas.width, canvas.height);
+}
+```
+ 
+Replace it with:
+ 
+```js
+images[0].onload = () => {
+    drawFrame(images[0]);
+}
+```
+ 
+**Step 2** — Find this line inside the scroll listener and delete it:
+ 
+```js
+context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+```
+ 
+Replace it with:
+ 
+```js
+drawFrame(images[frameIndex]);
+```
+ 
+**Step 3** — Add this new function anywhere in the `<script>`, before the scroll listener:
+ 
+```js
+function drawFrame(img) {
+    const canvasRatio = canvas.width / canvas.height;
+    const imgRatio = img.naturalWidth / img.naturalHeight;
+    let drawWidth, drawHeight, offsetX, offsetY;
+ 
+    if (imgRatio > canvasRatio) {
+        drawHeight = canvas.height;
+        drawWidth = drawHeight * imgRatio;
+    } else {
+        drawWidth = canvas.width;
+        drawHeight = drawWidth / imgRatio;
+    }
+ 
+    offsetX = (canvas.width - drawWidth) / 2;
+    offsetY = (canvas.height - drawHeight) / 2;
+ 
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+}
+```
+ 
+That's it. This works for any ratio — 16:9, 9:16, 1:1, or anything else.
+ 
+> **Which ratio should I export my frames in?**
+> - Making a **desktop site**? Use 16:9 (e.g. 1920×1080).
+> - Making a **mobile site**? Use 9:16 (e.g. 1080×1920).
+> - Want it to **work on both**? Use 9:16. The fix above will crop the left and right edges slightly on desktop, which usually looks fine as long as your subject is centred in the frame.
+ 
+---
+
 ## Troubleshooting
 
 **Blank canvas / no animation**
