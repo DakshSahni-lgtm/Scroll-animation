@@ -15,7 +15,7 @@ As the user scrolls down the page, JavaScript swaps canvas frames in sync with t
 ### 1. Collect Frames From Your Video
 
 Use any frame extractor tool.
-> BONUS: You can use my frame extractor tool for generating upto 60 frames per second without any quality loss: [video-frames-extractor](https://dakshsahni-lgtm.github.io/video-frames-extractor/) .
+> BONUS: You can use my frame extractor tool for generating upto 60 frames per second without any quality loss: [video-frames-extractor](https://dakshsahni14.github.io/video-frames-extractor/) .
 
 ### 2. Prepare Your Frames
 
